@@ -47,14 +47,11 @@ table {
   /*opacity: .6;*/
 }
 
-.table1 {
+.no_display {
   display: none;
 }
-.table2 {
-  display: none;
-}
-.table3 {
-  display: none;
+.table0 {
+  display: inline-block !important;
 }
 .arrowPad {
   margin-top: 20px;
@@ -71,12 +68,15 @@ table {
 /*.arrowPadMid {
   border: none !important;
 }*/
+.cubeRow{
+  /*color: yellow;*/
+}
 .tableCol {
   margin: 0px;
   padding: 0px;
 }
 td {
-  background-color: rgb(68, 122, 68);
+  /*background-color: white;*/
   border-bottom: 4px solid grey;
   border-right: 4px solid grey;
   border-top: 4px solid lightgray;
@@ -85,7 +85,8 @@ td {
 .cell {
   width: 50px;
   height: 50px;
-  font-size: 20px;
+  font-size: 30px;
+  color: white;
 }
 .clicked {
   background-color: grey;

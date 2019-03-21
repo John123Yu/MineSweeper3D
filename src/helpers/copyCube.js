@@ -11,7 +11,6 @@ export function rotateCube(
 
   newCube = Arr3D(x, y, z);
 
-  //   console.log(newCube);
   for (let i = 0; i < x; i++) {
     for (let j = 0; j < y; j++) {
       for (let k = 0; k < z; k++) {

@@ -1,12 +1,12 @@
 // @flow
-export function Arr3D(x: number, y: number, z: number) {
+export function Arr3D(x: number, y: number, z: number, val = "") {
   let firArr: Array<Array<Array<number | string>>> = [];
   for (let i = 0; i < x; i++) {
     let secArr: Array<Array<number | string>> = [];
     for (let j = 0; j < y; j++) {
       let thirArr: Array<number | string> = [];
       for (let k = 0; k < z; k++) {
-        thirArr.push("");
+        thirArr.push({ val });
       }
       secArr.push(thirArr);
     }
@@ -26,8 +26,10 @@ export function populateArr3D(
     let x = floorRand(Xlen);
     let y = floorRand(Ylen);
     let z = floorRand(Zlen);
-    if (!Arr3D[x][y][z]) {
-      Arr3D[x][x][z] = val;
+    // console.log(x, y, z);
+    console.log(Arr3D[x][y][z].val);
+    if (!Arr3D[x][y][z].val) {
+      Arr3D[x][y][z].val = val;
       count--;
     }
   }
@@ -42,8 +44,7 @@ export function AdjCounts3D(
   for (let i = 0; i < cubeLen; i++) {
     for (let j = 0; j < cubeLen; j++) {
       for (let k = 0; k < cubeLen; k++) {
-        if (Arr3D[i][j][k] === val) {
-          console.log("this here");
+        if (Arr3D[i][j][k].val === val) {
           Arr3D = incrAdjArr3D(Arr3D, val, i, j, k);
         }
       }
@@ -66,11 +67,11 @@ function incrAdjArr3D(
       for (let b of jList) {
         if (Arr3D[a][b] !== undefined) {
           for (let c of kList) {
-            if (Arr3D[a][b][c] !== undefined && Arr3D[a][b][c] !== val) {
-              if (typeof Arr3D[a][b][c] !== "number") {
-                Arr3D[a][b][c] = 0;
+            if (Arr3D[a][b][c] !== undefined && Arr3D[a][b][c].val !== val) {
+              if (typeof Arr3D[a][b][c].val !== "number") {
+                Arr3D[a][b][c].val = 0;
               }
-              Arr3D[a][b][c]++;
+              Arr3D[a][b][c].val++;
             }
           }
         }
@@ -81,4 +82,43 @@ function incrAdjArr3D(
 }
 function floorRand(scale: number) {
   return Math.floor(Math.random() * scale);
+}
+
+function readCubeFace(face) {
+  let vals = 0;
+  for (let i = 0; i < face.length; i++) {
+    for (let j = 0; j < face.length; j++) {
+      if (typeof face[i][j] !== "number") vals += 0.00001;
+      else {
+        if (face[i][j] >= 10) {
+          vals += face[i][j];
+          vals -= 10;
+        } else {
+          vals += face[i][j];
+        }
+      }
+    }
+  }
+  return vals;
+}
+function getRandomColor() {
+  var letters = "0123456789ABCDEF";
+  var color = "#";
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+export function cubeFaceColor() {
+  let faceColors = {};
+  return function(val) {
+    val = readCubeFace(val);
+    // console.log(faceColors);
+    // console.log(val);
+    if (faceColors[val]) return faceColors[val];
+    var digit = val.toString()[val.toString().length - 1];
+    faceColors[val] = getRandomColor();
+    return faceColors[val];
+  };
 }

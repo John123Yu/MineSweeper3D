@@ -33,9 +33,9 @@ export default class CubeCell extends Component<Props, State> {
         className={cellsClass}
         onClick={this.handleClick.bind(this)}
       >
-        {this.props.val > 10 ? this.props.val - 10 : ""}
-        {this.props.val === "☀☀" ? "☀" : ""}
-        {/* {this.props.val} */}
+        {/* {this.props.val > 10 ? this.props.val - 10 : ""} */}
+        {/* {this.props.val === "☀☀" ? "☀" : ""} */}
+        {this.props.val}
       </td>
     );
   }
