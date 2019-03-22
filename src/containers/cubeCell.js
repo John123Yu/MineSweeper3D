@@ -6,11 +6,12 @@ type Props = {
   y: number,
   z: number,
   val: string | number,
-  click: method
+  click: method,
+  clicked: boolean,
+  color: string
 };
 type State = {};
 // let endMineSweeperGame = false;
-
 export default class CubeCell extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -21,21 +22,23 @@ export default class CubeCell extends Component<Props, State> {
     click(x, y, z);
   }
   render() {
-    let { x, y, z } = this.props;
+    let { x, y, z, val, clicked, color } = this.props;
     let cellsClass = classNames({
       cell: true,
-      clicked: this.props.val >= 10 || this.props.val === "☀☀",
+      clicked,
       bomb: this.props.val === "☀"
     });
+    const colorStyle = {
+      backgroundColor: color
+    };
     return (
       <td
         id={`${x}_${y}_${z}`}
         className={cellsClass}
         onClick={this.handleClick.bind(this)}
+        style={colorStyle}
       >
-        {/* {this.props.val > 10 ? this.props.val - 10 : ""} */}
-        {/* {this.props.val === "☀☀" ? "☀" : ""} */}
-        {this.props.val}
+        {clicked ? val : ""}
       </td>
     );
   }

@@ -26,8 +26,6 @@ export function populateArr3D(
     let x = floorRand(Xlen);
     let y = floorRand(Ylen);
     let z = floorRand(Zlen);
-    // console.log(x, y, z);
-    console.log(Arr3D[x][y][z].val);
     if (!Arr3D[x][y][z].val) {
       Arr3D[x][y][z].val = val;
       count--;
@@ -39,7 +37,6 @@ export function AdjCounts3D(
   Arr3D: Array<Array<Array<number | string>>>,
   val: string | number
 ) {
-  // console.log(Arr3D);
   let cubeLen = Arr3D.length;
   for (let i = 0; i < cubeLen; i++) {
     for (let j = 0; j < cubeLen; j++) {
@@ -80,10 +77,29 @@ function incrAdjArr3D(
   }
   return Arr3D;
 }
+export function fillCubeFaces(
+  Arr3D: Array<Array<Array<number | string>>>,
+  filler, //memoized function
+  name: string
+) {
+  let x = Arr3D.length;
+  let y = Arr3D[0].length;
+  let z = Arr3D[0][0].length;
+  let faceFiller = filler();
+
+  for (let i = 0; i < x; i++) {
+    let value = faceFiller(i);
+    for (let j = 0; j < y; j++) {
+      for (let k = 0; k < z; k++) {
+        Arr3D[i][j][k][name] = value;
+      }
+    }
+  }
+  return Arr3D;
+}
 function floorRand(scale: number) {
   return Math.floor(Math.random() * scale);
 }
-
 function readCubeFace(face) {
   let vals = 0;
   for (let i = 0; i < face.length; i++) {
@@ -112,10 +128,9 @@ function getRandomColor() {
 
 export function cubeFaceColor() {
   let faceColors = {};
-  return function(val) {
-    val = readCubeFace(val);
-    // console.log(faceColors);
-    // console.log(val);
+  return function(val, func) {
+    // val = readCubeFace(val);
+    if (func) val = func(val);
     if (faceColors[val]) return faceColors[val];
     var digit = val.toString()[val.toString().length - 1];
     faceColors[val] = getRandomColor();

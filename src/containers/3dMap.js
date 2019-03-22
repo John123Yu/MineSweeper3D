@@ -7,8 +7,9 @@ import {
   Arr3D,
   populateArr3D,
   AdjCounts3D,
+  fillCubeFaces,
   cubeFaceColor
-} from "../helpers/cubeMap";
+} from "../helpers/createCubeMap";
 import { rotateCube } from "../helpers/copyCube";
 import { truncate } from "fs";
 
@@ -19,8 +20,7 @@ type State = {
   bombVal: string,
   theCube: Array<Array<Array<number | string>>>,
   cellsClicked: number,
-  clickedMap: Object,
-  faceColor: method
+  clickedMap: Object
 };
 
 export default class Map3D extends Component<Props, State> {
@@ -29,11 +29,22 @@ export default class Map3D extends Component<Props, State> {
     let cubeSize = 3;
     let bombCount = 3;
     let bombVal = "☀";
-    let theCube = AdjCounts3D(
-      populateArr3D(Arr3D(cubeSize, cubeSize, cubeSize), bombVal, bombCount),
-      bombVal
+    let theCube = fillCubeFaces(
+      fillCubeFaces(
+        AdjCounts3D(
+          populateArr3D(
+            Arr3D(cubeSize, cubeSize, cubeSize),
+            bombVal,
+            bombCount
+          ),
+          bombVal
+        ),
+        cubeFaceColor,
+        "color"
+      ),
+      () => () => false,
+      "clicked"
     );
-    console.log("here", theCube);
     this.state = {
       cubeSize,
       bombCount,
@@ -41,7 +52,6 @@ export default class Map3D extends Component<Props, State> {
       theCube,
       cellsClicked: 1
     };
-    console.log("HERE");
     console.log(this.state.theCube);
   }
 
@@ -50,13 +60,9 @@ export default class Map3D extends Component<Props, State> {
   }
 
   click(x, y, z) {
-    // if (this.state.theCube[x][y][z] < 10) {
-    //   this.state.theCube[x][y][z] += 10;
-    //   this.setState({ theCube: this.state.theCube });
-    // } else if (this.state.theCube[x][y][z] === "☀") {
-    //   this.state.theCube[x][y][z] += "☀";
-    //   this.setState({ theCube: this.state.theCube });
-    // }
+    let { theCube } = this.state;
+    theCube[x][y][z].clicked = true;
+    this.setState({ theCube: this.state.theCube });
   }
 
   render() {
@@ -66,9 +72,6 @@ export default class Map3D extends Component<Props, State> {
     return (
       <div>
         {theCube.map((yArr, x) => {
-          // const faceColorStyle = {
-          //   backgroundColor: faceColor(theCube[0])
-          // };
           return (
             <table
               key={x}
@@ -87,6 +90,8 @@ export default class Map3D extends Component<Props, State> {
                             y={y}
                             z={z}
                             val={val.val}
+                            clicked={val.clicked}
+                            color={val.color}
                           />
                         );
                       })}

@@ -1,4 +1,4 @@
-import { Arr3D } from "./cubeMap";
+import { Arr3D } from "./createCubeMap";
 
 export function rotateCube(
   OCube: Array<Array<Array<number | string>>>,
