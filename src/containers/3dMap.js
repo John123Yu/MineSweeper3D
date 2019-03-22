@@ -11,7 +11,7 @@ import {
   cubeFaceColor
 } from "../helpers/createCubeMap";
 import { rotateCube } from "../helpers/copyCube";
-import { truncate } from "fs";
+import classNames from "classnames";
 
 type Props = {};
 type State = {
@@ -20,14 +20,15 @@ type State = {
   bombVal: string,
   theCube: Array<Array<Array<number | string>>>,
   cellsClicked: number,
-  clickedMap: Object
+  clickedMap: Object,
+  zoom: number
 };
 
 export default class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    let cubeSize = 3;
-    let bombCount = 3;
+    let cubeSize = 5;
+    let bombCount = 30;
     let bombVal = "☀";
     let theCube = fillCubeFaces(
       fillCubeFaces(
@@ -50,13 +51,21 @@ export default class Map3D extends Component<Props, State> {
       bombCount,
       bombVal,
       theCube,
-      cellsClicked: 1
+      cellsClicked: 1,
+      zoom: 0
     };
     console.log(this.state.theCube);
   }
 
   arrowPad(arrow) {
-    this.setState({ theCube: rotateCube(this.state.theCube, arrow) });
+    if (arrow) {
+      this.setState({ theCube: rotateCube(this.state.theCube, arrow) });
+    } else {
+      let zoom = this.state.zoom;
+      zoom++;
+      if (zoom >= this.state.cubeSize) zoom = 0;
+      this.setState({ zoom: zoom });
+    }
   }
 
   click(x, y, z) {
@@ -67,16 +76,17 @@ export default class Map3D extends Component<Props, State> {
 
   render() {
     let {
-      state: { theCube }
+      state: { theCube, zoom }
     } = this;
+    console.log(zoom);
     return (
       <div>
         {theCube.map((yArr, x) => {
+          let tableClass = classNames({
+            no_display: x !== zoom
+          });
           return (
-            <table
-              key={x}
-              className={"table table-bordered" + " no_display table" + x}
-            >
+            <table key={x} className={tableClass}>
               <tbody>
                 {yArr.map((zArr, y) => {
                   return (

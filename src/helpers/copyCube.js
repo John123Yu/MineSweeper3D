@@ -23,10 +23,10 @@ export function rotateCube(
         } else if (direction === "left") {
           let new_k = x - i - 1;
           newCube[k][j][new_k] = OCube[i][j][k];
-        } else if (direction === "up") {
+        } else if (direction === "down") {
           let new_i = x - j - 1;
           newCube[new_i][i][k] = OCube[i][j][k];
-        } else if (direction === "down") {
+        } else if (direction === "up") {
           let new_j = x - i - 1;
           newCube[j][new_j][k] = OCube[i][j][k];
         }

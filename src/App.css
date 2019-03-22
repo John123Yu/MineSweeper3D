@@ -51,7 +51,7 @@ table {
   display: none;
 }
 .table0 {
-  display: inline-block !important;
+  /*display: inline-block !important;*/
 }
 .arrowPad {
   margin-top: 20px;
@@ -79,8 +79,8 @@ td {
   /*background-color: white;*/
   border-bottom: 4px solid grey;
   border-right: 4px solid grey;
-  border-top: 4px solid lightgray;
-  border-left: 4px solid lightgray;
+  border-top: 4px solid white;
+  border-left: 4px solid white;
 }
 .cell {
   width: 50px;
@@ -91,6 +91,8 @@ td {
 .clicked {
   background-color: grey;
   border: 4px solid darkgrey !important;
+  filter: brightness(80%);
+  /*opacity: 80%;*/
 }
 p {
   margin-left: 31%;
