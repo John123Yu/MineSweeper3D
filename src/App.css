@@ -37,21 +37,17 @@ table {
   display: inline-block;
   border-collapse: separate;
   border-spacing: 0px;
-  /*width: 300px;*/
-  /*transform: rotateX(80deg);*/
-  /*transform: rotateY(70deg);*/
-  /*transform: rotateZ(90deg);*/
-  /*transform: transform(30px);*/
-  /*transform: translateY(30px);*/
-  /*transform: scale3d(2,2,2);*/
-  /*opacity: .6;*/
+  margin-left: 25px;
 }
 
-.no_display {
-  display: none;
+.mapRow {
+  height: 450px;
+  text-align: center;
+  margin: 0 auto
 }
-.table0 {
-  /*display: inline-block !important;*/
+.table {
+  margin-left: 10px;
+  position: relative;
 }
 .arrowPad {
   margin-top: 20px;
@@ -64,13 +60,9 @@ table {
   border-left: 2px solid lightgray;
   width: 40px;
   height: 40px;
+  cursor: pointer;
 }
-/*.arrowPadMid {
-  border: none !important;
-}*/
-.cubeRow{
-  /*color: yellow;*/
-}
+
 .tableCol {
   margin: 0px;
   padding: 0px;
@@ -79,8 +71,8 @@ td {
   /*background-color: white;*/
   border-bottom: 4px solid grey;
   border-right: 4px solid grey;
-  border-top: 4px solid white;
-  border-left: 4px solid white;
+  border-top: 4px solid rgb(234, 234, 234);
+  border-left: 4px solid rgb(234, 234, 234);
 }
 .cell {
   width: 50px;

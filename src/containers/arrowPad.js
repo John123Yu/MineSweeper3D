@@ -12,23 +12,19 @@ export default class ArrowPad extends Component<Props, State> {
 
   upArrow() {
     let { arrowPad } = this.props;
-    arrowPad("up");
+    arrowPad("down");
   }
   rightArrow() {
     let { arrowPad } = this.props;
-    arrowPad("right");
+    arrowPad("left");
   }
   leftArrow() {
     let { arrowPad } = this.props;
-    arrowPad("left");
+    arrowPad("right");
   }
   downArrow() {
     let { arrowPad } = this.props;
-    arrowPad("down");
-  }
-  midBox() {
-    let { arrowPad } = this.props;
-    arrowPad("");
+    arrowPad("up");
   }
 
   render() {
@@ -43,9 +39,7 @@ export default class ArrowPad extends Component<Props, State> {
             </tr>
             <tr>
               <td onClick={this.leftArrow.bind(this)}> ← </td>
-              <td className="arrowPadMid" onClick={this.midBox.bind(this)}>
-                {" "}
-              </td>
+              <td className="arrowPadMid"> </td>
               <td onClick={this.rightArrow.bind(this)}> → </td>
             </tr>
             <tr>

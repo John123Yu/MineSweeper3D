@@ -11,7 +11,7 @@ import {
   cubeFaceColor
 } from "../helpers/createCubeMap";
 import { rotateCube } from "../helpers/copyCube";
-import classNames from "classnames";
+// import classNames from "classnames";
 
 type Props = {};
 type State = {
@@ -20,99 +20,116 @@ type State = {
   bombVal: string,
   theCube: Array<Array<Array<number | string>>>,
   cellsClicked: number,
-  clickedMap: Object,
-  zoom: number
+  clickedMap: Object
 };
 
 export default class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    let cubeSize = 5;
-    let bombCount = 30;
+    let cubeSize = 4;
+    let bombCount = 5;
     let bombVal = "☀";
     let theCube = fillCubeFaces(
       fillCubeFaces(
-        AdjCounts3D(
-          populateArr3D(
-            Arr3D(cubeSize, cubeSize, cubeSize),
-            bombVal,
-            bombCount
+        fillCubeFaces(
+          AdjCounts3D(
+            populateArr3D(
+              Arr3D(cubeSize, cubeSize, cubeSize),
+              bombVal,
+              bombCount
+            ),
+            bombVal
           ),
-          bombVal
+          cubeFaceColor,
+          "color"
         ),
-        cubeFaceColor,
-        "color"
+        () => () => false,
+        "clicked"
       ),
       () => () => false,
-      "clicked"
+      "recursed"
     );
     this.state = {
       cubeSize,
       bombCount,
       bombVal,
       theCube,
-      cellsClicked: 1,
-      zoom: 0
+      cellsClicked: 1
     };
     console.log(this.state.theCube);
   }
-
   arrowPad(arrow) {
-    if (arrow) {
-      this.setState({ theCube: rotateCube(this.state.theCube, arrow) });
-    } else {
-      let zoom = this.state.zoom;
-      zoom++;
-      if (zoom >= this.state.cubeSize) zoom = 0;
-      this.setState({ zoom: zoom });
-    }
+    this.setState({ theCube: rotateCube(this.state.theCube, arrow) });
   }
-
   click(x, y, z) {
     let { theCube } = this.state;
     theCube[x][y][z].clicked = true;
-    this.setState({ theCube: this.state.theCube });
-  }
+    this.setState({ theCube });
 
+    //recursion
+    if (theCube[x][y][z].val === "" && !theCube[x][y][z].recursed) {
+      theCube[x][y][z].recursed = true;
+      this.setState({ theCube });
+      let iList = [x - 1, x, x + 1];
+      let jList = [y - 1, y, y + 1];
+      let kList = [z - 1, z, z + 1];
+      for (let i of iList) {
+        if (theCube[i]) {
+          for (let j of jList) {
+            if (theCube[i][j]) {
+              for (let k of kList) {
+                if (theCube[i][j][k] && !theCube[i][j][k].clicked) {
+                  console.log("why");
+                  // setImmediate(() => {
+                  this.click(i, j, k);
+                  // });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   render() {
     let {
-      state: { theCube, zoom }
+      state: { theCube }
     } = this;
-    console.log(zoom);
     return (
       <div>
-        {theCube.map((yArr, x) => {
-          let tableClass = classNames({
-            no_display: x !== zoom
-          });
-          return (
-            <table key={x} className={tableClass}>
-              <tbody>
-                {yArr.map((zArr, y) => {
-                  return (
-                    <tr key={y} className="cubeRow">
-                      {zArr.map((val, z) => {
-                        return (
-                          <CubeCell
-                            click={this.click.bind(this)}
-                            key={z}
-                            x={x}
-                            y={y}
-                            z={z}
-                            val={val.val}
-                            clicked={val.clicked}
-                            color={val.color}
-                          />
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          );
-        })}
-        <ArrowPad arrowPad={this.arrowPad.bind(this)} />
+        <div className="row mapRow">
+          {theCube.map((yArr, x) => {
+            return (
+              <table key={x} className={" table" + x}>
+                <tbody>
+                  {yArr.map((zArr, y) => {
+                    return (
+                      <tr key={y} className="cubeRow">
+                        {zArr.map((val, z) => {
+                          return (
+                            <CubeCell
+                              click={this.click.bind(this)}
+                              key={z}
+                              x={x}
+                              y={y}
+                              z={z}
+                              val={val.val}
+                              clicked={val.clicked}
+                              color={val.color}
+                            />
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            );
+          })}
+        </div>
+        <div>
+          <ArrowPad arrowPad={this.arrowPad.bind(this)} />
+        </div>
       </div>
     );
   }

@@ -14,9 +14,6 @@ export function rotateCube(
   for (let i = 0; i < x; i++) {
     for (let j = 0; j < y; j++) {
       for (let k = 0; k < z; k++) {
-        // console.log(i, j, k);
-        // console.log(new_i, j, i);
-        // console.log("----------");
         if (direction === "right") {
           let new_i = x - k - 1;
           newCube[new_i][j][i] = OCube[i][j][k];
