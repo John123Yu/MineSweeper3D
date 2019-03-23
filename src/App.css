@@ -68,7 +68,6 @@ table {
   padding: 0px;
 }
 td {
-  /*background-color: white;*/
   border-bottom: 4px solid grey;
   border-right: 4px solid grey;
   border-top: 4px solid rgb(234, 234, 234);
@@ -79,6 +78,13 @@ td {
   height: 50px;
   font-size: 30px;
   color: white;
+}
+.selected {
+  border: 2px dotted red;
+  /*border-bottom: 4px solid black;*/
+  /*border-right: 4px solid black;*/
+  /*border-top: 3px red;
+  border-left: 3px red;*/
 }
 .clicked {
   background-color: grey;

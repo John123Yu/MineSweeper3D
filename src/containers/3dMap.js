@@ -27,27 +27,31 @@ export default class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     let cubeSize = 4;
-    let bombCount = 5;
+    let bombCount = 8;
     let bombVal = "☀";
     let theCube = fillCubeFaces(
       fillCubeFaces(
         fillCubeFaces(
-          AdjCounts3D(
-            populateArr3D(
-              Arr3D(cubeSize, cubeSize, cubeSize),
-              bombVal,
-              bombCount
+          fillCubeFaces(
+            AdjCounts3D(
+              populateArr3D(
+                Arr3D(cubeSize, cubeSize, cubeSize),
+                bombVal,
+                bombCount
+              ),
+              bombVal
             ),
-            bombVal
+            cubeFaceColor,
+            "color"
           ),
-          cubeFaceColor,
-          "color"
+          () => () => false,
+          "clicked"
         ),
         () => () => false,
-        "clicked"
+        "recursed"
       ),
       () => () => false,
-      "recursed"
+      "selected"
     );
     this.state = {
       cubeSize,
@@ -79,10 +83,7 @@ export default class Map3D extends Component<Props, State> {
             if (theCube[i][j]) {
               for (let k of kList) {
                 if (theCube[i][j][k] && !theCube[i][j][k].clicked) {
-                  console.log("why");
-                  // setImmediate(() => {
                   this.click(i, j, k);
-                  // });
                 }
               }
             }
@@ -91,6 +92,34 @@ export default class Map3D extends Component<Props, State> {
       }
     }
   }
+  mouseOver(x, y, z) {
+    let { theCube } = this.state;
+    let iList = [x - 1, x, x + 1];
+    let jList = [y - 1, y, y + 1];
+    let kList = [z - 1, z, z + 1];
+    //TODO: implement queue with mouseOut for performance
+    for (let i of iList) {
+      if (theCube[i]) {
+        for (let j of jList) {
+          if (theCube[i][j]) {
+            for (let k of kList) {
+              if (theCube[i][j][k] && !theCube[i][j][k].selected) {
+                if (!(i === x && j === y && k === z))
+                  theCube[i][j][k].selected = true;
+              }
+            }
+          }
+        }
+      }
+    }
+    this.setState({ theCube });
+  }
+  mouseOut() {
+    let { theCube } = this.state;
+    theCube = fillCubeFaces(theCube, () => () => false, "selected");
+    this.setState({ theCube });
+  }
+
   render() {
     let {
       state: { theCube }
@@ -108,6 +137,8 @@ export default class Map3D extends Component<Props, State> {
                         {zArr.map((val, z) => {
                           return (
                             <CubeCell
+                              mouseOver={this.mouseOver.bind(this)}
+                              mouseOut={this.mouseOut.bind(this)}
                               click={this.click.bind(this)}
                               key={z}
                               x={x}
@@ -116,6 +147,7 @@ export default class Map3D extends Component<Props, State> {
                               val={val.val}
                               clicked={val.clicked}
                               color={val.color}
+                              selected={val.selected}
                             />
                           );
                         })}

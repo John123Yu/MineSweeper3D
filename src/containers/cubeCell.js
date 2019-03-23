@@ -21,12 +21,17 @@ export default class CubeCell extends Component<Props, State> {
     let { x, y, z, click } = this.props;
     click(x, y, z);
   }
+  handleMouseOver() {
+    let { x, y, z, mouseOver } = this.props;
+    mouseOver(x, y, z);
+  }
   render() {
-    let { x, y, z, val, clicked, color } = this.props;
+    let { x, y, z, val, clicked, color, selected, mouseOut } = this.props;
     let cellsClass = classNames({
       cell: true,
       clicked,
-      bomb: this.props.val === "☀"
+      bomb: this.props.val === "☀",
+      selected
     });
     const colorStyle = {
       backgroundColor: color
@@ -36,6 +41,8 @@ export default class CubeCell extends Component<Props, State> {
         id={`${x}_${y}_${z}`}
         className={cellsClass}
         onClick={this.handleClick.bind(this)}
+        onMouseOver={this.handleMouseOver.bind(this)}
+        onMouseLeave={mouseOut}
         style={colorStyle}
       >
         {clicked ? val : ""}
