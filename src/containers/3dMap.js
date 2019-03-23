@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import CubeCell from "./cubeCell";
 import ArrowPad from "./arrowPad";
+import ScoreBoard from "./scoreBoard";
 import {
   Arr3D,
   populateArr3D,
@@ -20,7 +21,9 @@ type State = {
   bombVal: string,
   theCube: Array<Array<Array<number | string>>>,
   cellsClicked: number,
-  clickedMap: Object
+  clickedMap: Object,
+  bombsLeft: number,
+  ratio: number
 };
 
 export default class Map3D extends Component<Props, State> {
@@ -28,7 +31,9 @@ export default class Map3D extends Component<Props, State> {
     super(props);
     let cubeSize = 4;
     let bombCount = 8;
+    let bombsLeft = bombCount;
     let bombVal = "☀";
+    let ratio = 0;
     let theCube = fillCubeFaces(
       fillCubeFaces(
         fillCubeFaces(
@@ -58,7 +63,9 @@ export default class Map3D extends Component<Props, State> {
       bombCount,
       bombVal,
       theCube,
-      cellsClicked: 1
+      cellsClicked: 1,
+      bombsLeft,
+      ratio
     };
     console.log(this.state.theCube);
   }
@@ -66,10 +73,12 @@ export default class Map3D extends Component<Props, State> {
     this.setState({ theCube: rotateCube(this.state.theCube, arrow) });
   }
   click(x, y, z) {
-    let { theCube } = this.state;
+    let { theCube, bombVal } = this.state;
     theCube[x][y][z].clicked = true;
     this.setState({ theCube });
 
+    if (theCube[x][y][z].val === bombVal)
+      this.setState({ bombsLeft: --this.state.bombsLeft });
     //recursion
     if (theCube[x][y][z].val === "" && !theCube[x][y][z].recursed) {
       theCube[x][y][z].recursed = true;
@@ -93,17 +102,26 @@ export default class Map3D extends Component<Props, State> {
     }
   }
   mouseOver(x, y, z) {
-    let { theCube } = this.state;
+    let { theCube, bombVal } = this.state;
     let iList = [x - 1, x, x + 1];
     let jList = [y - 1, y, y + 1];
     let kList = [z - 1, z, z + 1];
+    let bombs = 0;
+    let cells = 0;
+    let num = theCube[x][y][z].val;
     //TODO: implement queue with mouseOut for performance
     for (let i of iList) {
       if (theCube[i]) {
         for (let j of jList) {
           if (theCube[i][j]) {
             for (let k of kList) {
-              if (theCube[i][j][k] && !theCube[i][j][k].selected) {
+              if (theCube[i][j][k]) {
+                if (!theCube[i][j][k].clicked) cells++;
+                if (
+                  theCube[i][j][k].clicked &&
+                  theCube[i][j][k].val === bombVal
+                )
+                  bombs++;
                 if (!(i === x && j === y && k === z))
                   theCube[i][j][k].selected = true;
               }
@@ -112,6 +130,11 @@ export default class Map3D extends Component<Props, State> {
         }
       }
     }
+    let ratio: Float32Array;
+    theCube[x][y][z].clicked
+      ? (ratio = (num - bombs) / cells)
+      : (ratio = "n/a");
+    this.setState({ ratio });
     this.setState({ theCube });
   }
   mouseOut() {
@@ -122,7 +145,7 @@ export default class Map3D extends Component<Props, State> {
 
   render() {
     let {
-      state: { theCube }
+      state: { theCube, bombsLeft, ratio }
     } = this;
     return (
       <div>
@@ -161,6 +184,7 @@ export default class Map3D extends Component<Props, State> {
         </div>
         <div>
           <ArrowPad arrowPad={this.arrowPad.bind(this)} />
+          <ScoreBoard bombsLeft={bombsLeft} ratio={ratio} />
         </div>
       </div>
     );

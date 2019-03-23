@@ -80,15 +80,18 @@ td {
   color: white;
 }
 .selected {
-  border: 2px dotted red;
-  /*border-bottom: 4px solid black;*/
-  /*border-right: 4px solid black;*/
-  /*border-top: 3px red;
-  border-left: 3px red;*/
+  /*border: 2px dotted red !important;*/
+  border-bottom: 4px dotted red !important;
+  border-right: 4px dotted red !important;
+  /*border-top: 3px dotted red !important;*/
+  /*border-left: 3px dotted red !important;*/
+}
+.selected .clicked {
+  border: 2px dashed red !important;
 }
 .clicked {
   background-color: grey;
-  border: 4px solid darkgrey !important;
+  border: 4px solid darkgrey;
   filter: brightness(80%);
   /*opacity: 80%;*/
 }
