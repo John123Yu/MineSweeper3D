@@ -31,23 +31,11 @@
     transform: rotate(360deg);
   }
 }
-
-
 table {
   display: inline-block;
   border-collapse: separate;
   border-spacing: 0px;
   margin-left: 25px;
-}
-
-.mapRow {
-  height: 450px;
-  text-align: center;
-  margin: 0 auto
-}
-.table {
-  margin-left: 10px;
-  position: relative;
 }
 .arrowPad {
   margin-top: 20px;
@@ -62,7 +50,46 @@ table {
   height: 40px;
   cursor: pointer;
 }
-
+.bomb.clicked {
+  color: rgb(216, 0, 0) !important;
+  font-size: 30px;
+  padding: 0px;
+}
+.cell {
+  width: 40px;
+  height: 40px;
+  font-size: 25px;
+  color: white;
+}
+.clicked {
+  background-color: grey;
+  border: 4px solid darkgrey;
+  filter: brightness(80%);
+}
+.mapRow {
+  height: 450px;
+  text-align: center;
+  margin: 0 auto
+}
+.menuDiv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+p {
+  margin-left: 31%;
+}
+.selected {
+  border-bottom: 4px dotted red !important;
+  border-right: 4px dotted red !important;
+}
+.selected .clicked {
+  border: 2px dashed red !important;
+}
+.table {
+  margin-left: 10px;
+  position: relative;
+}
 .tableCol {
   margin: 0px;
   padding: 0px;
@@ -73,36 +100,25 @@ td {
   border-top: 4px solid rgb(234, 234, 234);
   border-left: 4px solid rgb(234, 234, 234);
 }
-.cell {
-  width: 50px;
-  height: 50px;
-  font-size: 30px;
-  color: white;
+
+/*cube.js*/
+.cube {
+  width: 100px;
+  transform-style: preserve-3d;
 }
-.selected {
-  /*border: 2px dotted red !important;*/
-  border-bottom: 4px dotted red !important;
-  border-right: 4px dotted red !important;
-  /*border-top: 3px dotted red !important;*/
-  /*border-left: 3px dotted red !important;*/
+.cube div {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  background-color: rgb(219, 219, 219, .1);
+  box-shadow: inset 0 0 30px rgba(125,125,125,0.8);
 }
-.selected .clicked {
-  border: 2px dashed red !important;
+.wrap {
+  width: 250px;
+  perspective: 800px;
+  perspective-origin: 25% 250px;
 }
-.clicked {
-  background-color: grey;
-  border: 4px solid darkgrey;
-  filter: brightness(80%);
-  /*opacity: 80%;*/
-}
-p {
-  margin-left: 31%;
-}
-.bomb.clicked {
-  color: rgb(216, 0, 0) !important;
-  font-size: 30px;
-  padding: 0px;
-}
-.hidden {
-  visibility: hidden;
-}
+
+
+
+

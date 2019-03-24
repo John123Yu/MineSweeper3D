@@ -14,18 +14,22 @@ export default class ScoreBoard extends Component<Props, State> {
   }
 
   render() {
-    let { bombsLeft, ratio } = this.props;
+    let { bombsLeft, ratio, spaces } = this.props;
     return (
       <div>
         <table className="arrowPad">
           <tbody>
             <tr>
               <td> Bombs Left: </td>
+              <td> Spaces: </td>
+              <td> Fraction: </td>
               <td> Ratio: </td>
             </tr>
             <tr>
               <td>{bombsLeft}</td>
+              <td> {spaces} </td>
               <td>{ratio}</td>
+              <td> {1 / ratio}</td>
             </tr>
           </tbody>
         </table>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Map3D from "./containers/3dMap";
+import Map3D from "./containers/map";
 // import MSInfo from "./statelessComps/minesweeperInfo";
 import "./App.css";
 
