@@ -8,7 +8,9 @@ type Props = {
   val: string | number,
   click: method,
   clicked: boolean,
-  color: string
+  color: string,
+  flag: boolean,
+  contextMenu: method
 };
 type State = {};
 // let endMineSweeperGame = false;
@@ -16,7 +18,12 @@ export default class CubeCell extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
   }
-  handleContextMenu(e: SyntheticMouseEvent<>) {}
+  handleContextMenu(e: SyntheticMouseEvent<>) {
+    e.preventDefault();
+    console.log("here");
+    let { clicked, contextMenu, x, y, z } = this.props;
+    if (!clicked) contextMenu(x, y, z);
+  }
   handleClick() {
     let { x, y, z, click } = this.props;
     click(x, y, z);
@@ -26,7 +33,7 @@ export default class CubeCell extends Component<Props, State> {
     mouseOver(x, y, z);
   }
   render() {
-    let { x, y, z, val, clicked, color, selected, mouseOut } = this.props;
+    let { x, y, z, val, clicked, color, selected, mouseOut, flag } = this.props;
     let cellsClass = classNames({
       cell: true,
       clicked,
@@ -41,11 +48,13 @@ export default class CubeCell extends Component<Props, State> {
         id={`${x}_${y}_${z}`}
         className={cellsClass}
         onClick={this.handleClick.bind(this)}
+        onContextMenu={this.handleContextMenu.bind(this)}
         onMouseOver={this.handleMouseOver.bind(this)}
         onMouseLeave={mouseOut}
         style={colorStyle}
       >
         {clicked ? val : ""}
+        {flag ? "⚑" : ""}
       </td>
     );
   }

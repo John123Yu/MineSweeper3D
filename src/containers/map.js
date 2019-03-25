@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import CubeCell from "./cubeCell";
+import CubeCell from "./cell";
 import ArrowPad from "./arrowPad";
 import ScoreBoard from "./scoreBoard";
 import Cube from "./cube";
@@ -13,14 +13,20 @@ import {
   cubeFaceColor
 } from "../helpers/createCubeMap";
 import { rotateCube } from "../helpers/copyCube";
-// import classNames from "classnames";
 
+type Cell = {
+  color: string,
+  clicked: boolean,
+  recursed: boolean,
+  selected: boolean,
+  flag: boolean
+};
 type Props = {};
 type State = {
   cubeSize: number,
   bombCount: number,
   bombVal: string,
-  theCube: Array<Array<Array<number | string>>>,
+  theCube: Array<Array<Array<Cell>>>,
   cellsClicked: number,
   clickedMap: Object,
   bombsLeft: number,
@@ -32,7 +38,7 @@ export default class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     let cubeSize = 4;
-    let bombCount = 3;
+    let bombCount = 8;
     let bombsLeft = bombCount;
     let bombVal = "☀";
     let ratio = 0;
@@ -40,25 +46,29 @@ export default class Map3D extends Component<Props, State> {
       fillCubeFaces(
         fillCubeFaces(
           fillCubeFaces(
-            AdjCounts3D(
-              populateArr3D(
-                Arr3D(cubeSize, cubeSize, cubeSize),
-                bombVal,
-                bombCount
+            fillCubeFaces(
+              AdjCounts3D(
+                populateArr3D(
+                  Arr3D(cubeSize, cubeSize, cubeSize),
+                  bombVal,
+                  bombCount
+                ),
+                bombVal
               ),
-              bombVal
+              cubeFaceColor,
+              "color"
             ),
-            cubeFaceColor,
-            "color"
+            () => () => false,
+            "clicked"
           ),
           () => () => false,
-          "clicked"
+          "recursed"
         ),
         () => () => false,
-        "recursed"
+        "selected"
       ),
       () => () => false,
-      "selected"
+      "flag"
     );
     this.state = {
       cubeSize,
@@ -71,7 +81,6 @@ export default class Map3D extends Component<Props, State> {
       rotateX: 0,
       rotateY: 0
     };
-    console.log(this.state.theCube);
   }
   arrowPad(arrow) {
     let { theCube, rotateX, rotateY } = this.state;
@@ -108,36 +117,45 @@ export default class Map3D extends Component<Props, State> {
       default:
         break;
     }
-    console.log("X", rotateX);
-    console.log("Y", rotateY);
   }
   click(x, y, z) {
     let { theCube, bombVal } = this.state;
-    theCube[x][y][z].clicked = true;
-    this.setState({ theCube });
+    let { flag, val, recursed } = theCube[x][y][z];
 
-    if (theCube[x][y][z].val === bombVal)
-      this.setState({ bombsLeft: --this.state.bombsLeft });
-    //recursion
-    if (theCube[x][y][z].val === "" && !theCube[x][y][z].recursed) {
-      theCube[x][y][z].recursed = true;
+    if (!flag) {
+      theCube[x][y][z].clicked = true;
       this.setState({ theCube });
-      let iList = [x - 1, x, x + 1];
-      let jList = [y - 1, y, y + 1];
-      let kList = [z - 1, z, z + 1];
-      for (let i of iList) {
-        if (theCube[i]) {
-          for (let j of jList) {
-            if (theCube[i][j]) {
-              for (let k of kList) {
-                if (theCube[i][j][k] && !theCube[i][j][k].clicked) {
-                  this.click(i, j, k);
+
+      if (val === bombVal) this.setState({ bombsLeft: --this.state.bombsLeft });
+
+      if (val === "" && !recursed) {
+        theCube[x][y][z].recursed = true;
+        this.setState({ theCube });
+        let iList = [x - 1, x, x + 1];
+        let jList = [y - 1, y, y + 1];
+        let kList = [z - 1, z, z + 1];
+        for (let i of iList) {
+          if (theCube[i]) {
+            for (let j of jList) {
+              if (theCube[i][j]) {
+                for (let k of kList) {
+                  if (theCube[i][j][k] && !theCube[i][j][k].clicked) {
+                    this.click(i, j, k);
+                  }
                 }
               }
             }
           }
         }
       }
+    }
+  }
+  contextMenu(x, y, z) {
+    let { theCube } = this.state;
+    let { clicked, flag } = theCube[x][y][z];
+    if (!clicked) {
+      theCube[x][y][z].flag = !flag;
+      this.setState({ theCube });
     }
   }
   mouseOver(x, y, z) {
@@ -182,7 +200,6 @@ export default class Map3D extends Component<Props, State> {
     theCube = fillCubeFaces(theCube, () => () => false, "selected");
     this.setState({ theCube });
   }
-
   render() {
     let {
       state: { theCube, bombsLeft, ratio, spaces, rotateX, rotateY }
@@ -207,6 +224,7 @@ export default class Map3D extends Component<Props, State> {
                               mouseOver={this.mouseOver.bind(this)}
                               mouseOut={this.mouseOut.bind(this)}
                               click={this.click.bind(this)}
+                              contextMenu={this.contextMenu.bind(this)}
                               key={z}
                               x={x}
                               y={y}
@@ -215,6 +233,7 @@ export default class Map3D extends Component<Props, State> {
                               clicked={val.clicked}
                               color={val.color}
                               selected={val.selected}
+                              flag={val.flag}
                             />
                           );
                         })}

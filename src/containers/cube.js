@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from "react";
-import { transform } from "typescript";
 
 type Props = { colors: Array<string>, rotateY: number, rotateX: number };
 type State = {};
@@ -13,7 +12,6 @@ export default class Cube extends Component<Props, State> {
       colors: this.props.colors
     };
   }
-
   render() {
     let { colors } = this.state;
     let { rotateX, rotateY } = this.props;
