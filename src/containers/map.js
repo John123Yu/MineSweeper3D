@@ -42,6 +42,7 @@ export default class Map3D extends Component<Props, State> {
     let bombsLeft = bombCount;
     let bombVal = "☀";
     let ratio = 0;
+    let safeCells = cubeSize * cubeSize * cubeSize - bombCount;
     let theCube = fillCubeFaces(
       fillCubeFaces(
         fillCubeFaces(
@@ -79,8 +80,17 @@ export default class Map3D extends Component<Props, State> {
       bombsLeft,
       ratio,
       rotateX: 0,
-      rotateY: 0
+      rotateY: 0,
+      safeCells
     };
+  }
+  incCellsClicked() {
+    let { cellsClicked, safeCells } = this.state;
+    this.setState({
+      cellsClicked: cellsClicked + 1
+    });
+    if (cellsClicked >= safeCells) alert("☀☀☀ You have won! ☀☀☀");
+    console.log(cellsClicked);
   }
   arrowPad(arrow) {
     let { theCube, rotateX, rotateY } = this.state;
@@ -120,14 +130,12 @@ export default class Map3D extends Component<Props, State> {
   }
   click(x, y, z) {
     let { theCube, bombVal } = this.state;
-    let { flag, val, recursed } = theCube[x][y][z];
-
+    let { flag, val, recursed, clicked } = theCube[x][y][z];
     if (!flag) {
+      if (val !== bombVal && !clicked) this.incCellsClicked();
       theCube[x][y][z].clicked = true;
       this.setState({ theCube });
-
       if (val === bombVal) this.setState({ bombsLeft: --this.state.bombsLeft });
-
       if (val === "" && !recursed) {
         theCube[x][y][z].recursed = true;
         this.setState({ theCube });
@@ -140,6 +148,10 @@ export default class Map3D extends Component<Props, State> {
               if (theCube[i][j]) {
                 for (let k of kList) {
                   if (theCube[i][j][k] && !theCube[i][j][k].clicked) {
+                    setImmediate(() => {
+                      if (theCube[i][j][k].val !== bombVal)
+                        this.incCellsClicked();
+                    });
                     this.click(i, j, k);
                   }
                 }

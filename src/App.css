@@ -66,6 +66,9 @@ table {
   border: 4px solid darkgrey;
   filter: brightness(80%);
 }
+.hidden {
+  visibility: hidden;
+}
 .mapRow {
   height: 450px;
   text-align: center;
