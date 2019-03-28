@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
+import { withToastManager } from "react-toast-notifications";
 import CubeCell from "./cell";
 import ArrowPad from "./arrowPad";
 import ScoreBoard from "./scoreBoard";
@@ -21,7 +22,9 @@ type Cell = {
   selected: boolean,
   flag: boolean
 };
-type Props = {};
+type Props = {
+  toastManager: Object
+};
 type State = {
   cubeSize: number,
   bombCount: number,
@@ -34,9 +37,11 @@ type State = {
   spaces: number
 };
 
-export default class Map3D extends Component<Props, State> {
+class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    let { toastManager } = this.props;
+    toastManager.add("Saved Successfully", { appearance: "success" });
     let cubeSize = 4;
     let bombCount = 8;
     let bombsLeft = bombCount;
@@ -266,3 +271,5 @@ export default class Map3D extends Component<Props, State> {
     );
   }
 }
+
+export default withToastManager(Map3D);
