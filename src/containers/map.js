@@ -1,6 +1,10 @@
 // @flow
 
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+// import { initMap, initDisplay, initClicked } from "../actions/index";
+
 import { withToastManager } from "react-toast-notifications";
 import CubeCell from "./cell";
 import ArrowPad from "./arrowPad";
@@ -22,10 +26,7 @@ type Cell = {
   selected: boolean,
   flag: boolean
 };
-type Props = {
-  toastManager: Object
-};
-type State = {
+type gameSettings = {
   cubeSize: number,
   bombCount: number,
   bombVal: string,
@@ -36,66 +37,31 @@ type State = {
   ratio: number,
   spaces: number
 };
+type Props = {
+  toastManager: Object,
+  gameSettings: Object
+};
+type State = {};
 
 class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    let { toastManager } = this.props;
-    toastManager.add("Saved Successfully", { appearance: "success" });
-    let cubeSize = 4;
-    let bombCount = 8;
-    let bombsLeft = bombCount;
-    let bombVal = "☀";
-    let ratio = 0;
-    let safeCells = cubeSize * cubeSize * cubeSize - bombCount;
-    let theCube = fillCubeFaces(
-      fillCubeFaces(
-        fillCubeFaces(
-          fillCubeFaces(
-            fillCubeFaces(
-              AdjCounts3D(
-                populateArr3D(
-                  Arr3D(cubeSize, cubeSize, cubeSize),
-                  bombVal,
-                  bombCount
-                ),
-                bombVal
-              ),
-              cubeFaceColor,
-              "color"
-            ),
-            () => () => false,
-            "clicked"
-          ),
-          () => () => false,
-          "recursed"
-        ),
-        () => () => false,
-        "selected"
-      ),
-      () => () => false,
-      "flag"
-    );
-    this.state = {
-      cubeSize,
-      bombCount,
-      bombVal,
-      theCube,
-      cellsClicked: 1,
-      bombsLeft,
-      ratio,
-      rotateX: 0,
-      rotateY: 0,
-      safeCells
-    };
+    let { toastManager, gameSettings } = this.props;
+    toastManager.add("You have won", {
+      appearance: "success"
+    });
+    this.state = gameSettings;
   }
   incCellsClicked() {
     let { cellsClicked, safeCells } = this.state;
+    let { toastManager } = this.props;
     this.setState({
       cellsClicked: cellsClicked + 1
     });
-    if (cellsClicked >= safeCells) alert("☀☀☀ You have won! ☀☀☀");
-    console.log(cellsClicked);
+    if (cellsClicked >= safeCells)
+      toastManager.add("You have won", {
+        appearance: "success"
+      });
   }
   arrowPad(arrow) {
     let { theCube, rotateX, rotateY } = this.state;
@@ -272,4 +238,15 @@ class Map3D extends Component<Props, State> {
   }
 }
 
-export default withToastManager(Map3D);
+function mapStateToProps({ gameSettings }) {
+  return { gameSettings };
+}
+
+// function mapDispatchToProps(dispatch) {
+//   return bindActionCreators({ initDisplay, initMap, initClicked }, dispatch);
+// }
+
+export default connect(
+  mapStateToProps,
+  null
+)(withToastManager(Map3D));

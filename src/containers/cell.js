@@ -20,7 +20,6 @@ export default class CubeCell extends Component<Props, State> {
   }
   handleContextMenu(e: SyntheticMouseEvent<>) {
     e.preventDefault();
-    console.log("here");
     let { clicked, contextMenu, x, y, z } = this.props;
     if (!clicked) contextMenu(x, y, z);
   }

@@ -7,7 +7,7 @@ import "./App.css";
 class App extends Component {
   render() {
     return (
-      <ToastProvider>
+      <ToastProvider placement="top-left" autoDismiss={true}>
         <div className="App">
           <br />
           <Map3D className="map" />
