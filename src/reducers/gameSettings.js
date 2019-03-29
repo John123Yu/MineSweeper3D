@@ -11,7 +11,6 @@ let initialState = new function() {
   this.cubeSize = 4;
   this.bombCount = 8;
   this.bombVal = "☀";
-  this.ratio = 0;
   this.safeCells =
     this.cubeSize * this.cubeSize * this.cubeSize - this.bombCount;
   this.theCube = customeCube(
@@ -20,10 +19,10 @@ let initialState = new function() {
     this.bombCount,
     cubeFaceColor
   );
+
   this.cellsClicked = 1;
+  this.ratio = 0;
   this.bombsLeft = this.bombCount;
-  this.rotateX = 0;
-  this.rotateY = 0;
 }();
 
 export default function(state = initialState, action) {

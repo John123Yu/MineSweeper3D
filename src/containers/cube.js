@@ -1,20 +1,19 @@
 // @flow
 
 import React, { Component } from "react";
-
+import { connect } from "react-redux";
 type Props = { colors: Array<string>, rotateY: number, rotateX: number };
 type State = {};
 
-export default class Cube extends Component<Props, State> {
+class Cube extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      colors: this.props.colors
-    };
   }
   render() {
-    let { colors } = this.state;
-    let { rotateX, rotateY } = this.props;
+    let {
+      arrowDirection: { rotateX, rotateY },
+      colors
+    } = this.props;
     let rotateStyle = {
       transform: `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`
     };
@@ -34,3 +33,12 @@ export default class Cube extends Component<Props, State> {
     );
   }
 }
+
+function mapStateToProps({ arrowDirection }) {
+  return { arrowDirection };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(Cube);

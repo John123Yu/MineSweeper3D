@@ -1,30 +1,50 @@
 // @flow
 
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import {
+  rotateRight,
+  rotateLeft,
+  rotateUp,
+  rotateDown
+} from "../actions/arrowActions";
 
 type Props = {};
 type State = {};
 
-export default class ArrowPad extends Component<Props, State> {
+class ArrowPad extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
   }
 
   upArrow() {
-    let { arrowPad } = this.props;
-    arrowPad("down");
+    let {
+      arrowDirection: { rotateX, rotateY },
+      rotateDown
+    } = this.props;
+    rotateDown(rotateX, rotateY);
   }
   rightArrow() {
-    let { arrowPad } = this.props;
-    arrowPad("left");
+    let {
+      arrowDirection: { rotateX, rotateY },
+      rotateLeft
+    } = this.props;
+    rotateLeft(rotateX, rotateY);
   }
   leftArrow() {
-    let { arrowPad } = this.props;
-    arrowPad("right");
+    let {
+      arrowDirection: { rotateX, rotateY },
+      rotateRight
+    } = this.props;
+    rotateRight(rotateX, rotateY);
   }
   downArrow() {
-    let { arrowPad } = this.props;
-    arrowPad("up");
+    let {
+      arrowDirection: { rotateX, rotateY },
+      rotateUp
+    } = this.props;
+    rotateUp(rotateX, rotateY);
   }
 
   render() {
@@ -53,3 +73,19 @@ export default class ArrowPad extends Component<Props, State> {
     );
   }
 }
+
+function mapStateToProps({ arrowDirection }) {
+  return { arrowDirection };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    { rotateRight, rotateLeft, rotateUp, rotateDown },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ArrowPad);

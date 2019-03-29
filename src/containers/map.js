@@ -3,20 +3,19 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-// import { initMap, initDisplay, initClicked } from "../actions/index";
+import {
+  rotateRight,
+  rotateLeft,
+  rotateUp,
+  rotateDown
+} from "../actions/arrowActions";
 
 import { withToastManager } from "react-toast-notifications";
 import CubeCell from "./cell";
 import ArrowPad from "./arrowPad";
 import ScoreBoard from "./scoreBoard";
 import Cube from "./cube";
-import {
-  Arr3D,
-  populateArr3D,
-  AdjCounts3D,
-  fillCubeFaces,
-  cubeFaceColor
-} from "../helpers/createCubeMap";
+import { fillCubeFaces } from "../helpers/createCubeMap";
 import { rotateCube } from "../helpers/copyCube";
 
 type Cell = {
@@ -46,11 +45,12 @@ type State = {};
 class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    let { toastManager, gameSettings } = this.props;
-    toastManager.add("You have won", {
-      appearance: "success"
-    });
-    this.state = gameSettings;
+    let { toastManager, gameSettings, arrowDirection } = this.props;
+    // toastManager.add("You have won", {
+    //   appearance: "success"
+    // });
+    this.state = { ...gameSettings };
+    console.log(this.state);
   }
   incCellsClicked() {
     let { cellsClicked, safeCells } = this.state;
@@ -64,36 +64,29 @@ class Map3D extends Component<Props, State> {
       });
   }
   arrowPad(arrow) {
-    let { theCube, rotateX, rotateY } = this.state;
+    let { theCube } = this.state;
+    let {
+      rotateUp,
+      rotateDown,
+      rotateLeft,
+      rotateRight,
+      arrowDirection: { rotateX, rotateY }
+    } = this.props;
     this.setState({ theCube: rotateCube(theCube, arrow) });
     switch (arrow) {
       case "up":
-        if ([90, -90, 270, -270].indexOf(rotateY) === -1) {
-          rotateX -= 90;
-          if ([-360, 360].includes(rotateX)) rotateX = 0;
-          this.setState({ rotateX });
-        }
+        console.log(rotateUp);
+        console.log(rotateX);
+        rotateUp(rotateX, rotateY);
         break;
       case "down":
-        if ([90, -90, 270, -270].indexOf(rotateY) === -1) {
-          if ([-360, 360].includes(rotateX)) rotateX = 0;
-          rotateX += 90;
-          this.setState({ rotateX });
-        }
+        rotateDown(rotateX, rotateY);
         break;
       case "right":
-        if ([90, -90, 270, -270].indexOf(rotateX) === -1) {
-          if ([-360, 360].includes(rotateY)) rotateY = 0;
-          rotateY -= 90;
-          this.setState({ rotateY });
-        }
+        rotateRight(rotateX, rotateY);
         break;
       case "left":
-        if ([90, -90, 270, -270].indexOf(rotateX) === -1) {
-          if ([-360, 360].includes(rotateY)) rotateY = 0;
-          rotateY += 90;
-          this.setState({ rotateY });
-        }
+        rotateLeft(rotateX, rotateY);
         break;
       default:
         break;
@@ -185,7 +178,8 @@ class Map3D extends Component<Props, State> {
   }
   render() {
     let {
-      state: { theCube, bombsLeft, ratio, spaces, rotateX, rotateY }
+      state: { theCube, bombsLeft, ratio, spaces },
+      props: { rotateX, rotateY }
     } = this;
     let colors = [];
     for (let i = theCube.length - 1; i >= 0; i--) {
@@ -229,7 +223,7 @@ class Map3D extends Component<Props, State> {
           })}
         </div>
         <div className="menuDiv">
-          <Cube colors={colors} rotateX={rotateX} rotateY={rotateY} />
+          <Cube colors={colors} />
           <ArrowPad arrowPad={this.arrowPad.bind(this)} />
           <ScoreBoard bombsLeft={bombsLeft} ratio={ratio} spaces={spaces} />
         </div>
@@ -238,15 +232,18 @@ class Map3D extends Component<Props, State> {
   }
 }
 
-function mapStateToProps({ gameSettings }) {
-  return { gameSettings };
+function mapStateToProps({ gameSettings, arrowDirection }) {
+  return { gameSettings, arrowDirection };
 }
 
-// function mapDispatchToProps(dispatch) {
-//   return bindActionCreators({ initDisplay, initMap, initClicked }, dispatch);
-// }
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    { rotateRight, rotateLeft, rotateUp, rotateDown },
+    dispatch
+  );
+}
 
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(withToastManager(Map3D));
