@@ -3,20 +3,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import {
-  rotateRight,
-  rotateLeft,
-  rotateUp,
-  rotateDown
-} from "../actions/arrowActions";
-
 import { withToastManager } from "react-toast-notifications";
+
 import CubeCell from "./cell";
 import ArrowPad from "./arrowPad";
 import ScoreBoard from "./scoreBoard";
 import Cube from "./cube";
 import { fillCubeFaces } from "../helpers/createCubeMap";
-import { rotateCube } from "../helpers/copyCube";
 
 type Cell = {
   color: string,
@@ -25,7 +18,7 @@ type Cell = {
   selected: boolean,
   flag: boolean
 };
-type gameSettings = {
+type GameSettings = {
   cubeSize: number,
   bombCount: number,
   bombVal: string,
@@ -38,7 +31,7 @@ type gameSettings = {
 };
 type Props = {
   toastManager: Object,
-  gameSettings: Object
+  gameSettings: GameSettings
 };
 type State = {};
 
@@ -46,15 +39,15 @@ class Map3D extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     let { toastManager, gameSettings, arrowDirection } = this.props;
+    // console.log(this.props);
     // toastManager.add("You have won", {
     //   appearance: "success"
     // });
-    this.state = { ...gameSettings };
-    console.log(this.state);
+    // this.state = { ...gameSettings };
+    // console.log(this.state);
   }
   incCellsClicked() {
-    let { cellsClicked, safeCells } = this.state;
-    let { toastManager } = this.props;
+    let { cellsClicked, safeCells, toastManager } = this.props;
     this.setState({
       cellsClicked: cellsClicked + 1
     });
@@ -63,37 +56,11 @@ class Map3D extends Component<Props, State> {
         appearance: "success"
       });
   }
-  arrowPad(arrow) {
-    let { theCube } = this.state;
-    let {
-      rotateUp,
-      rotateDown,
-      rotateLeft,
-      rotateRight,
-      arrowDirection: { rotateX, rotateY }
-    } = this.props;
-    this.setState({ theCube: rotateCube(theCube, arrow) });
-    switch (arrow) {
-      case "up":
-        console.log(rotateUp);
-        console.log(rotateX);
-        rotateUp(rotateX, rotateY);
-        break;
-      case "down":
-        rotateDown(rotateX, rotateY);
-        break;
-      case "right":
-        rotateRight(rotateX, rotateY);
-        break;
-      case "left":
-        rotateLeft(rotateX, rotateY);
-        break;
-      default:
-        break;
-    }
-  }
   click(x, y, z) {
-    let { theCube, bombVal } = this.state;
+    let {
+      gameSettings: { theCube },
+      bombVal
+    } = this.props;
     let { flag, val, recursed, clicked } = theCube[x][y][z];
     if (!flag) {
       if (val !== bombVal && !clicked) this.incCellsClicked();
@@ -127,15 +94,20 @@ class Map3D extends Component<Props, State> {
     }
   }
   contextMenu(x, y, z) {
-    let { theCube } = this.state;
+    let {
+      gameSettings: { theCube }
+    } = this.props;
     let { clicked, flag } = theCube[x][y][z];
     if (!clicked) {
       theCube[x][y][z].flag = !flag;
-      this.setState({ theCube });
+      // this.setState({ theCube });
     }
   }
   mouseOver(x, y, z) {
-    let { theCube, bombVal } = this.state;
+    let {
+      gameSettings: { theCube },
+      bombVal
+    } = this.props;
     let iList = [x - 1, x, x + 1];
     let jList = [y - 1, y, y + 1];
     let kList = [z - 1, z, z + 1];
@@ -172,14 +144,20 @@ class Map3D extends Component<Props, State> {
     this.setState({ theCube });
   }
   mouseOut() {
-    let { theCube } = this.state;
+    let {
+      gameSettings: { theCube }
+    } = this.props;
     theCube = fillCubeFaces(theCube, () => () => false, "selected");
     this.setState({ theCube });
   }
   render() {
     let {
-      state: { theCube, bombsLeft, ratio, spaces },
-      props: { rotateX, rotateY }
+      props: {
+        gameSettings: { theCube },
+        bombsLeft,
+        ratio,
+        spaces
+      }
     } = this;
     let colors = [];
     for (let i = theCube.length - 1; i >= 0; i--) {
@@ -224,7 +202,7 @@ class Map3D extends Component<Props, State> {
         </div>
         <div className="menuDiv">
           <Cube colors={colors} />
-          <ArrowPad arrowPad={this.arrowPad.bind(this)} />
+          <ArrowPad />
           <ScoreBoard bombsLeft={bombsLeft} ratio={ratio} spaces={spaces} />
         </div>
       </div>
@@ -237,10 +215,7 @@ function mapStateToProps({ gameSettings, arrowDirection }) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    { rotateRight, rotateLeft, rotateUp, rotateDown },
-    dispatch
-  );
+  return bindActionCreators({}, dispatch);
 }
 
 export default connect(

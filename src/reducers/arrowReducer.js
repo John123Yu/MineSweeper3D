@@ -9,6 +9,15 @@ let initialState = {
 };
 
 export default function(state = initialState, action) {
-  if (action.payload) return action.payload;
+  switch (action.type) {
+    case ROTATE_UP:
+      return action.payload;
+    case ROTATE_DOWN:
+      return action.payload;
+    case ROTATE_LEFT:
+      return action.payload;
+    case ROTATE_RIGHT:
+      return action.payload;
+  }
   return state;
 }

@@ -1,4 +1,4 @@
-import { GAME_SETTINGS } from "../actions/mapActions.js";
+import { ROTATE_CUBE } from "../actions/cubeActions.js";
 import {
   Arr3D,
   populateArr3D,
@@ -19,15 +19,23 @@ let initialState = new function() {
     this.bombCount,
     cubeFaceColor
   );
-
   this.cellsClicked = 1;
   this.ratio = 0;
   this.bombsLeft = this.bombCount;
 }();
 
 export default function(state = initialState, action) {
-  if (action.payload) return action.payload;
-  return state;
+  switch (action.type) {
+    case ROTATE_CUBE:
+      // console.log(typeof state);
+      console.log(state.theCube[0][0][0]);
+      console.log(action.payload[0][0][0]);
+      let newState = { ...state, theCube: action.payload };
+      console.log(newState.theCube[0][0][0]);
+      return newState;
+    default:
+      return state;
+  }
 }
 
 function customeCube(cubeSize, bombVal, bombCount, cubeFaceColor) {

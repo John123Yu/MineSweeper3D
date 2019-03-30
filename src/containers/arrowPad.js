@@ -9,6 +9,7 @@ import {
   rotateUp,
   rotateDown
 } from "../actions/arrowActions";
+import { rotateCube_ } from "../actions/cubeActions";
 
 type Props = {};
 type State = {};
@@ -17,34 +18,45 @@ class ArrowPad extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
   }
-
   upArrow() {
     let {
       arrowDirection: { rotateX, rotateY },
-      rotateDown
+      rotateDown,
+      rotateCube_,
+      theCube
     } = this.props;
     rotateDown(rotateX, rotateY);
+    rotateCube_(theCube, "up");
   }
   rightArrow() {
     let {
       arrowDirection: { rotateX, rotateY },
-      rotateLeft
+      rotateLeft,
+      rotateCube_,
+      theCube
     } = this.props;
     rotateLeft(rotateX, rotateY);
+    rotateCube_(theCube, "right");
   }
   leftArrow() {
     let {
       arrowDirection: { rotateX, rotateY },
-      rotateRight
+      rotateRight,
+      rotateCube_,
+      theCube
     } = this.props;
     rotateRight(rotateX, rotateY);
+    rotateCube_(theCube, "left");
   }
   downArrow() {
     let {
       arrowDirection: { rotateX, rotateY },
-      rotateUp
+      rotateUp,
+      rotateCube_,
+      theCube
     } = this.props;
     rotateUp(rotateX, rotateY);
+    rotateCube_(theCube, "down");
   }
 
   render() {
@@ -74,13 +86,13 @@ class ArrowPad extends Component<Props, State> {
   }
 }
 
-function mapStateToProps({ arrowDirection }) {
-  return { arrowDirection };
+function mapStateToProps({ arrowDirection, gameSettings: { theCube } }) {
+  return { arrowDirection, theCube };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { rotateRight, rotateLeft, rotateUp, rotateDown },
+    { rotateRight, rotateLeft, rotateUp, rotateDown, rotateCube_ },
     dispatch
   );
 }

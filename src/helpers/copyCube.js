@@ -32,22 +32,3 @@ export function rotateCube(
   }
   return newCube;
 }
-
-// function queueWrap() {
-//   let storage = [];
-//   let i = 0;
-//   return {
-//     add: val => {
-//       storage.push(val);
-//     },
-//     dequeue: () => {
-//       if (storage[i] === undefined) {
-//         storage.length = 0;
-//         i = 0;
-//       } else {
-//         i++;
-//         return storage[i - 1];
-//       }
-//     }
-//   };
-// }

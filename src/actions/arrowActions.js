@@ -28,9 +28,8 @@ export function rotateUp(rotateX, rotateY) {
     rotateX -= 90;
     if ([-360, 360].includes(rotateX)) rotateX = 0;
   }
-  console.log({ rotateX, rotateY });
   return {
-    type: ROTATE_UP,
+    type: ROTATE_DOWN,
     payload: { rotateX, rotateY }
   };
 }
