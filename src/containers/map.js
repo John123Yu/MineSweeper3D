@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withToastManager } from "react-toast-notifications";
 
+import { updateCube } from "../actions/cubeActions";
+import { incrCellsClicked, decrBombsLeft } from "../actions/scoreActions";
 import CubeCell from "./cell";
 import ArrowPad from "./arrowPad";
 import ScoreBoard from "./scoreBoard";
@@ -43,30 +45,30 @@ class Map3D extends Component<Props, State> {
     // toastManager.add("You have won", {
     //   appearance: "success"
     // });
-    // this.state = { ...gameSettings };
-    // console.log(this.state);
+    console.log(this.props);
   }
   incCellsClicked() {
-    let { cellsClicked, safeCells, toastManager } = this.props;
-    this.setState({
-      cellsClicked: cellsClicked + 1
-    });
+    let {
+      cellsClicked,
+      safeCells,
+      toastManager,
+      incrCellsClicked
+    } = this.props;
+    incrCellsClicked(++cellsClicked);
     if (cellsClicked >= safeCells)
       toastManager.add("You have won", {
         appearance: "success"
       });
   }
   click(x, y, z) {
-    let {
-      gameSettings: { theCube },
-      bombVal
-    } = this.props;
+    let { theCube, bombVal, decrBombsLeft, bombsLeft } = this.props;
     let { flag, val, recursed, clicked } = theCube[x][y][z];
     if (!flag) {
       if (val !== bombVal && !clicked) this.incCellsClicked();
       theCube[x][y][z].clicked = true;
-      this.setState({ theCube });
-      if (val === bombVal) this.setState({ bombsLeft: --this.state.bombsLeft });
+      updateCube(theCube);
+      if (val === bombVal) decrBombsLeft(--bombsLeft);
+      //checkpoint
       if (val === "" && !recursed) {
         theCube[x][y][z].recursed = true;
         this.setState({ theCube });
@@ -94,9 +96,7 @@ class Map3D extends Component<Props, State> {
     }
   }
   contextMenu(x, y, z) {
-    let {
-      gameSettings: { theCube }
-    } = this.props;
+    let { theCube } = this.props;
     let { clicked, flag } = theCube[x][y][z];
     if (!clicked) {
       theCube[x][y][z].flag = !flag;
@@ -104,10 +104,7 @@ class Map3D extends Component<Props, State> {
     }
   }
   mouseOver(x, y, z) {
-    let {
-      gameSettings: { theCube },
-      bombVal
-    } = this.props;
+    let { theCube, bombVal } = this.props;
     let iList = [x - 1, x, x + 1];
     let jList = [y - 1, y, y + 1];
     let kList = [z - 1, z, z + 1];
@@ -144,20 +141,13 @@ class Map3D extends Component<Props, State> {
     this.setState({ theCube });
   }
   mouseOut() {
-    let {
-      gameSettings: { theCube }
-    } = this.props;
+    let { theCube } = this.props;
     theCube = fillCubeFaces(theCube, () => () => false, "selected");
     this.setState({ theCube });
   }
   render() {
     let {
-      props: {
-        gameSettings: { theCube },
-        bombsLeft,
-        ratio,
-        spaces
-      }
+      props: { theCube, bombsLeft, ratio, spaces }
     } = this;
     let colors = [];
     for (let i = theCube.length - 1; i >= 0; i--) {
@@ -210,12 +200,35 @@ class Map3D extends Component<Props, State> {
   }
 }
 
-function mapStateToProps({ gameSettings, arrowDirection }) {
-  return { gameSettings, arrowDirection };
+function mapStateToProps({
+  gameSettings: {
+    cellsClicked,
+    safeCells,
+    theCube,
+    bombVal,
+    bombsLeft,
+    ratio,
+    spaces
+  },
+  arrowDirection
+}) {
+  return {
+    cellsClicked,
+    safeCells,
+    theCube,
+    bombVal,
+    bombsLeft,
+    ratio,
+    spaces,
+    arrowDirection
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators(
+    { incrCellsClicked, updateCube, decrBombsLeft },
+    dispatch
+  );
 }
 
 export default connect(

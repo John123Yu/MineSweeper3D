@@ -1,4 +1,8 @@
 import { ROTATE_CUBE } from "../actions/cubeActions.js";
+import { UPDATE_CUBE } from "../actions/cubeActions.js";
+import { INCR_CLICKED } from "../actions/scoreActions.js";
+import { DECR_BOMBS } from "../actions/scoreActions.js";
+
 import {
   Arr3D,
   populateArr3D,
@@ -27,12 +31,22 @@ let initialState = new function() {
 export default function(state = initialState, action) {
   switch (action.type) {
     case ROTATE_CUBE:
-      // console.log(typeof state);
-      console.log(state.theCube[0][0][0]);
-      console.log(action.payload[0][0][0]);
-      let newState = { ...state, theCube: action.payload };
-      console.log(newState.theCube[0][0][0]);
-      return newState;
+      return { ...state, theCube: action.payload };
+    case INCR_CLICKED:
+      return {
+        ...state,
+        cellsClicked: action.payload
+      };
+    case UPDATE_CUBE:
+      return {
+        ...state,
+        theCube: action.payload
+      }
+    case DECR_BOMBS:
+      return {
+        ...state,
+        theCube: action.payload
+    }
     default:
       return state;
   }
