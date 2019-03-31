@@ -6,7 +6,12 @@ import { bindActionCreators } from "redux";
 import { withToastManager } from "react-toast-notifications";
 
 import { updateCube } from "../actions/cubeActions";
-import { incrCellsClicked, decrBombsLeft } from "../actions/scoreActions";
+import {
+  incrCellsClicked,
+  decrBombsLeft,
+  updateRatio,
+  updateSpaces
+} from "../actions/scoreActions";
 import CubeCell from "./cell";
 import ArrowPad from "./arrowPad";
 import ScoreBoard from "./scoreBoard";
@@ -61,17 +66,16 @@ class Map3D extends Component<Props, State> {
       });
   }
   click(x, y, z) {
-    let { theCube, bombVal, decrBombsLeft, bombsLeft } = this.props;
+    let { theCube, bombVal, decrBombsLeft, bombsLeft, updateCube } = this.props;
     let { flag, val, recursed, clicked } = theCube[x][y][z];
     if (!flag) {
       if (val !== bombVal && !clicked) this.incCellsClicked();
       theCube[x][y][z].clicked = true;
       updateCube(theCube);
       if (val === bombVal) decrBombsLeft(--bombsLeft);
-      //checkpoint
       if (val === "" && !recursed) {
         theCube[x][y][z].recursed = true;
-        this.setState({ theCube });
+        updateCube(theCube);
         let iList = [x - 1, x, x + 1];
         let jList = [y - 1, y, y + 1];
         let kList = [z - 1, z, z + 1];
@@ -96,15 +100,21 @@ class Map3D extends Component<Props, State> {
     }
   }
   contextMenu(x, y, z) {
-    let { theCube } = this.props;
+    let { theCube, updateCube } = this.props;
     let { clicked, flag } = theCube[x][y][z];
     if (!clicked) {
       theCube[x][y][z].flag = !flag;
-      // this.setState({ theCube });
+      updateCube(theCube);
     }
   }
   mouseOver(x, y, z) {
-    let { theCube, bombVal } = this.props;
+    let {
+      theCube,
+      bombVal,
+      updateCube,
+      updateRatio,
+      updateSpaces
+    } = this.props;
     let iList = [x - 1, x, x + 1];
     let jList = [y - 1, y, y + 1];
     let kList = [z - 1, z, z + 1];
@@ -136,14 +146,14 @@ class Map3D extends Component<Props, State> {
     theCube[x][y][z].clicked
       ? (ratio = (num - bombs) / spaces)
       : (ratio = "n/a");
-    this.setState({ spaces });
-    this.setState({ ratio });
-    this.setState({ theCube });
+    updateSpaces(spaces);
+    updateRatio(ratio);
+    updateCube(theCube);
   }
   mouseOut() {
-    let { theCube } = this.props;
+    let { theCube, updateCube } = this.props;
     theCube = fillCubeFaces(theCube, () => () => false, "selected");
-    this.setState({ theCube });
+    updateCube(theCube);
   }
   render() {
     let {
@@ -226,7 +236,7 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { incrCellsClicked, updateCube, decrBombsLeft },
+    { incrCellsClicked, updateCube, decrBombsLeft, updateRatio, updateSpaces },
     dispatch
   );
 }

@@ -2,6 +2,8 @@ import { ROTATE_CUBE } from "../actions/cubeActions.js";
 import { UPDATE_CUBE } from "../actions/cubeActions.js";
 import { INCR_CLICKED } from "../actions/scoreActions.js";
 import { DECR_BOMBS } from "../actions/scoreActions.js";
+import { UPDATE_RATIO } from "../actions/scoreActions.js";
+import { UPDATE_SPACES } from "../actions/scoreActions.js";
 
 import {
   Arr3D,
@@ -45,8 +47,18 @@ export default function(state = initialState, action) {
     case DECR_BOMBS:
       return {
         ...state,
-        theCube: action.payload
+        bombsLeft: action.payload
     }
+    case UPDATE_RATIO:
+      return {
+        ...state,
+        ratio: action.payload
+      }
+    case UPDATE_SPACES:
+      return {
+        ...state,
+        spaces: action.payload
+      }
     default:
       return state;
   }
